@@ -1,0 +1,28 @@
+{
+  "logo": "logo/polet-vinkovci.png",
+  "oAgenciji": {
+    "naslov": "Zašto Polet Vinkovci?",
+    "podnaslov": "Putnička agencija s dugogodišnjim iskustvom u organizaciji učeničkih putovanja",
+    "prednosti": [
+      { "ikona": "FaBus", "naslov": "Vlastiti vozni park", "opis": "Moderni turistički autobusi s klimom i besplatnim internetom" },
+      { "ikona": "FaIdBadge", "naslov": "Profesionalni vozači", "opis": "Iskusni vozači i stručni pratitelji na cijelom putovanju" },
+      { "ikona": "FaShieldAlt", "naslov": "Sigurnost putnika", "opis": "Osiguranje putnika i prtljage, osiguranje odgovornosti i jamčevina" },
+      { "ikona": "FaCertificate", "naslov": "Certificirani specijalist", "opis": "UHPA certifikat za školska putovanja, Travelife i ISO 9001" }
+    ],
+    "certifikati": [
+      { "slika": "cert/uhpa.png", "w": 2.6, "h": 0.8 },
+      { "slika": "cert/travelife.png", "w": 3.1, "h": 0.7 },
+      { "slika": "cert/iso9001.png", "w": 1.8, "h": 1.0 }
+    ]
+  },
+  "pogodnosti": [
+    "Povrat uplaćenog novca u slučaju opravdanog razloga: bolest uz liječničku dokumentaciju, elementarna nepogoda, nesretan slučaj u obitelji"
+  ],
+  "kontakt": {
+    "ime": "Marija Bijelić",
+    "tel": "032 308 938",
+    "email": "agencija@polet.hr",
+    "web": "www.polet.hr",
+    "adresa": "Trg kralja Tomislava 1, Vinkovci"
+  }
+}
