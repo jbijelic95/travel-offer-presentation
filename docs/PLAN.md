@@ -128,8 +128,10 @@ Port `build.js` iz nacrta u `src/render/`:
 - `render(ponuda: Ponuda, assets: Assets): Promise<Buffer>`
 - Jedan modul po tipu slajda: `naslovna`, `ukratko`, `oAgenciji`, `dani`, `cijena`, `placanje`, `napomene`, `hvala`.
 - Fiksni sadržaj (o agenciji, certifikati, kontakt, pogodnosti koje nisu u ponudi) u `config/agencija.json` — mama/ti mijenjate bez koda.
-- Program po danima: 2 dana po slajdu; ako tekst dana > ~900 znakova, taj dan sam na slajdu. Font se ne smanjuje ispod 12 pt — radije novi slajd.
-- Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke.
+- Program po danima: 2 dana po slajdu, `polazak` (ako postoji) je prva kartica. Font je 13 pt i ne smanjuje se. Mjesto za fotku se smanjuje s 1,6 na 1,0 in kad tekstu treba prostora. Ako tekst ni tada ne stane u pola slajda (procjena po broju redaka, otprilike 650 znakova), taj dan je sam na slajdu, preko cijele širine.
+- Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke. Bez `cijena.iznos` prikazuje se `___,__ €`.
+- "Uključuje", "ne uključuje" i doplate teku u dva stupca. Što ne stane, ide na slajd "Cijena putovanja (nastavak)". Doplate su u tamnom okviru s cijenom; ako tamo ne stanu (npr. uz 3 varijante), idu na kraj desne liste.
+- "Napomene": što ne stane, ide na slajd "Napomene (nastavak)". Prazna sekcija ili slajd se izostavlja.
 - "Ukratko" slajd: 4 fiksne kartice, sve izračunate u kodu, nikad iz slobodnog teksta LLM-a: (1) dani = `dani.length`, (2) noćenja = broj dana čiji `tekst` sadrži "noćenje", (3) grupa = `grupa` ili `cijena.baza`, (4) prijevoz = `prijevoz.vrste` (ikona i naslov po enumu). Kartica čiji podatak fali se izostavlja (3 kartice umjesto 4) — ništa se ne izmišlja. Ruta = prva lokacija po danu, deduplicirano.
 - `placanje` i `pogodnosti`: obične liste (`string[]`), jedna ikona po sekciji. Bez biranja ikona po ključnim riječima.
 - Kontakt na "Hvala" slajdu: uvijek iz `config/agencija.json`, nikad iz `potpis`.
