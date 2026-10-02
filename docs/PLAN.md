@@ -44,7 +44,7 @@ Načela:
 | Ikone | react-icons → SVG → PNG (sharp) u build-time, spremljene u `assets/icons/` | ne renderirati ikone na svaki request |
 | Deploy | Docker (node + libreoffice) na Hetzner CX22 / Fly.io / Railway | treba LibreOffice, znači vlastiti container, ne serverless |
 | Auth | jedan zajednički pristupni ključ (basic auth ili `?key=` u cookieju) | javni URL, jedan korisnik; dovoljno |
-| Testovi | nema automatskih testova; provjera je ručna (otvoriti .pptx, pregledati JSON) | odluka vlasnika projekta |
+| Testovi | nema unit testova; `npm run check` uspoređuje SHA-256 renderiranih primjera, ostalo je ručni pregled | odluka vlasnika projekta |
 
 ## 3. `Ponuda` JSON shema (ugovor)
 
@@ -124,10 +124,11 @@ Prikaz: iznad gumba za download, žuta/crvena lista. Uz svaku poruku broj slajda
 
 ## 5. Renderer (template)
 
-Port `build.js` iz nacrta u `src/render/`:
-- `render(ponuda: Ponuda, assets: Assets): Promise<Buffer>`
+`src/render/` (port nacrta `prototype/build.js`, obrisan nakon M1):
+- `render(ponuda: Ponuda, agencija: Agencija): Promise<Buffer>`
 - Jedan modul po tipu slajda: `naslovna`, `ukratko`, `oAgenciji`, `dani`, `cijena`, `placanje`, `napomene`, `hvala`.
-- Fiksni sadržaj (o agenciji, certifikati, kontakt, pogodnosti koje nisu u ponudi) u `config/agencija.json` — mama/ti mijenjate bez koda.
+- Fiksni sadržaj agencije u `config/agencija.json`: kontakt, "o agenciji" i certifikati. Ništa više. Pogodnosti dolaze samo iz ponude.
+- Determinizam: datumi u `docProps/core.xml` i u zip zapisima su fiksni (`src/render/deterministic.ts`), pa isti JSON daje isti SHA-256.
 - Program po danima: 2 dana po slajdu, `polazak` (ako postoji) je prva kartica. Font je 13 pt i ne smanjuje se. Mjesto za fotku se smanjuje s 1,6 na 1,0 in kad tekstu treba prostora. Ako tekst ni tada ne stane u pola slajda (procjena po broju redaka, otprilike 650 znakova), taj dan je sam na slajdu, preko cijele širine.
 - Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke. Bez `cijena.iznos` prikazuje se `___,__ €`.
 - "Uključuje", "ne uključuje" i doplate teku u dva stupca. Što ne stane, ide na slajd "Cijena putovanja (nastavak)". Doplate su u tamnom okviru s cijenom; ako tamo ne stanu (npr. uz 3 varijante), idu na kraj desne liste.
@@ -161,11 +162,14 @@ ponuda-prezentacija/
     validate/            pravila
     render/              pptxgenjs template (po slajdu)
     schema/ponuda.ts     Zod
-  config/agencija.json   fiksni tekstovi, kontakt
+    cli/                 render.ts (npm run render), check.ts (npm run check)
+  scripts/build-icons.ts react-icons → PNG u assets/icons/ (npm run icons)
+  config/agencija.json   kontakt, o agenciji, certifikati
   config/lokacije.json   aliasi lokacija → mape fotki
   assets/logo/ assets/cert/ assets/icons/ assets/foto/
   public/index.html      UI
   examples/*.json        ručno napisane Ponuda JSON datoteke (ulaz za `npm run render`)
+  examples/*.sha256      očekivani SHA-256 renderiranog .pptx (za `npm run check`)
   test/fixtures/         uzorci ponuda i referentne prezentacije (samo za ručnu usporedbu)
   Dockerfile             node:22 + libreoffice-writer + fonts (Carlito za Calibri)
   CLAUDE.md
@@ -173,12 +177,13 @@ ponuda-prezentacija/
 
 ## 8. Milestones (redoslijed za Claude Code)
 
-**M1 — Renderer iz JSON-a** (bez LLM-a)
-- Scaffold repo, TS (bez testova; Dockerfile u M4).
+**M1 — Renderer iz JSON-a** (bez LLM-a) — ✅ gotovo
+- Scaffold repo, TS (bez unit testova; Dockerfile u M4).
 - Zod shema `Ponuda`.
-- Port `build.js` → `render()`; ručno napisan `examples/grcka.json` i `examples/budimpesta.json` kao ulaz.
-- Provjera: ručni vizualni pregled u PowerPointu.
-- ✅ Kad: `npm run render examples/grcka.json` da isti .pptx kao nacrt.
+- Port `prototype/build.js` → `render()`; `prototype/` obrisan. Ulaz: `examples/grcka.json` i `examples/budimpesta.json`.
+- `npm run render -- <ponuda.json>` → `out/<ime>.pptx`.
+- `npm run check`: renderira svaki `examples/*.json` i uspoređuje SHA-256 s `examples/<ime>.sha256`. Razlika = greška. Nakon namjerne promjene izgleda: pregledati `out/*.pptx` u PowerPointu, pa `npm run check -- --update`.
+- ✅ Kad: `npm run check` prolazi, a `out/grcka.pptx` izgleda kao nacrt `test/fixtures/reference/grcka-nacrt-v1.pptx` (sadržaj kartica i lista po pravilima iz §5).
 
 **M2 — Konverzija + ekstrakcija**
 - `convert()` za odt/docx (XML) i doc/pdf (soffice).

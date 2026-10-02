@@ -9,7 +9,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "icons": "tsx scripts/build-icons.ts",
-    "render": "tsx src/cli/render.ts"
+    "render": "tsx src/cli/render.ts",
+    "check": "tsx src/cli/check.ts"
   },
   "dependencies": {
     "jszip": "^3.10.2",

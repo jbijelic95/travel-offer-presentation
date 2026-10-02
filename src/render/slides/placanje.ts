@@ -4,8 +4,8 @@ import { C, M, W } from "../theme.js";
 
 // One icon per section (PLAN §5): FaCreditCard for payment, FaGift for benefits.
 export function placanje(ctx: Ctx): void {
-  const { pres, p, a } = ctx;
-  const pogodnosti = [...p.pogodnosti, ...a.pogodnosti];
+  const { pres, p } = ctx;
+  const pogodnosti = p.pogodnosti;
   if (!p.placanje.length && !pogodnosti.length) return;
 
   const s = newSlide(ctx);

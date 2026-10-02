@@ -26,7 +26,6 @@ export const Agencija = z.object({
       .length(4),
     certifikati: z.array(z.object({ slika, w: z.number().positive(), h: z.number().positive() })),
   }),
-  pogodnosti: z.array(z.string()),
   kontakt: z.object({
     ime: z.string(),
     tel: z.string(),
