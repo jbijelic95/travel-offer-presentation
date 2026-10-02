@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import type { Pres, Slide as PptxSlide } from "./pptx.js";
 import type { Agencija } from "../config.js";
 import type { Ponuda } from "../schema/ponuda.js";
@@ -17,6 +18,25 @@ export const BOTTOM = H - 0.85;
 // Shared text options. isTextBox + margin 0 keep pptxgenjs from adding its own padding.
 export const T = { fontFace: F, lang: "hr-HR", isTextBox: true, margin: 0 } as const;
 
+const MIME: Record<string, string> = { png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg" };
+const images = new Map<string, string>();
+
+/**
+ * Image file as pptxgenjs `data`. Never pass `path` to addImage: pptxgenjs writes it into
+ * <p:cNvPr descr="…">, so the output would depend on the folder the repo is checked out in.
+ */
+export function img(file: string): string {
+  let d = images.get(file);
+  if (!d) {
+    const ext = file.slice(file.lastIndexOf(".") + 1).toLowerCase();
+    const mime = MIME[ext];
+    if (!mime) throw new Error(`Nepodržan format slike: ${file}`);
+    d = `${mime};base64,${readFileSync(file).toString("base64")}`;
+    images.set(file, d);
+  }
+  return d;
+}
+
 export function newSlide(ctx: Ctx, dark = false): Slide {
   const s = ctx.pres.addSlide();
   s.background = { color: dark ? C.dark : C.white };
@@ -25,7 +45,7 @@ export function newSlide(ctx: Ctx, dark = false): Slide {
 
 export function footer(ctx: Ctx, s: Slide): void {
   const k = ctx.a.kontakt;
-  s.addImage({ path: ctx.a.logo, x: M, y: H - 0.62, w: 1.36, h: 0.3 });
+  s.addImage({ data: img(ctx.a.logo), x: M, y: H - 0.62, w: 1.36, h: 0.3 });
   s.addText(`${k.web}  ·  ${k.tel}`, { ...T, x: W - M - 4, y: H - 0.65, w: 4, h: 0.35, align: "right", fontSize: 10, color: C.mute });
 }
 

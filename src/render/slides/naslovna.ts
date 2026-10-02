@@ -1,5 +1,5 @@
 import type { TextRun } from "../pptx.js";
-import { darkSlide, plural, T, type Ctx } from "../parts.js";
+import { img, darkSlide, plural, T, type Ctx } from "../parts.js";
 import { C, H } from "../theme.js";
 
 export function naslovna(ctx: Ctx): void {
@@ -30,6 +30,6 @@ export function naslovna(ctx: Ctx): void {
   }
   s.addText(box, { ...T, x: 1.3, y: 4.35, w: 5.2, h: 1.4, valign: "middle" });
 
-  s.addImage({ path: a.logo, x: 1, y: H - 1.05, w: 2.5, h: 0.55 });
+  s.addImage({ data: img(a.logo), x: 1, y: H - 1.05, w: 2.5, h: 0.55 });
   s.addText(`PUTNIČKA AGENCIJA  ·  ${a.kontakt.web}`, { ...T, x: 3.7, y: H - 0.95, w: 6, h: 0.35, fontSize: 11, color: "BBBBBB", valign: "middle" });
 }

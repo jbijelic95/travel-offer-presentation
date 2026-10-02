@@ -1,6 +1,6 @@
 import type { Ponuda } from "../../schema/ponuda.js";
 import { iconPath } from "../icons.js";
-import { BOTTOM, footer, label, lineHeight, lines, newSlide, T, title, type Ctx, type Slide } from "../parts.js";
+import { img, BOTTOM, footer, label, lineHeight, lines, newSlide, T, title, type Ctx, type Slide } from "../parts.js";
 import { C, M, W } from "../theme.js";
 
 const PLACEHOLDER = "___,__ €";
@@ -55,7 +55,7 @@ function tok(s: Slide, bl: Blok[], stupci: Stupac[], y0: number): Blok[] {
         label(s, b.tekst, st.x, y, st.w);
       } else {
         h -= ITEM_GAP;
-        if (b.kvacica) s.addImage({ path: iconPath("FaCheck"), x: st.x, y: y + 0.05, w: 0.16, h: 0.16 });
+        if (b.kvacica) s.addImage({ data: img(iconPath("FaCheck")), x: st.x, y: y + 0.05, w: 0.16, h: 0.16 });
         else s.addText("–", { ...T, x: st.x, y, w: 0.2, h: 0.2, fontSize: ITEM_PT, bold: true, color: C.red });
         s.addText(b.tekst, { ...T, x: st.x + 0.28, y, w: st.w - 0.28, h, fontSize: ITEM_PT, color: C.ink, valign: "top" });
         h += ITEM_GAP;

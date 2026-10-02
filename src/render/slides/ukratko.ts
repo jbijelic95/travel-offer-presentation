@@ -1,6 +1,6 @@
 import type { Ponuda, VrstaPrijevoza } from "../../schema/ponuda.js";
 import { iconPath, type IconName } from "../icons.js";
-import { footer, newSlide, plural, T, title, type Ctx } from "../parts.js";
+import { img, footer, newSlide, plural, T, title, type Ctx } from "../parts.js";
 import { C, M, W } from "../theme.js";
 
 type Kartica = { ikone: IconName[]; big: string; small: string };
@@ -56,7 +56,7 @@ export function ukratko(ctx: Ctx): void {
   ks.forEach((k, i) => {
     const x = M + i * (tw + gap), y = 1.75;
     s.addShape(pres.ShapeType.roundRect, { x, y, w: tw, h: 1.9, fill: { color: C.light }, line: { color: C.light }, rectRadius: 0.12 });
-    k.ikone.forEach((ic, j) => s.addImage({ path: iconPath(ic), x: x + 0.3 + j * 0.6, y: y + 0.3, w: 0.45, h: 0.45 }));
+    k.ikone.forEach((ic, j) => s.addImage({ data: img(iconPath(ic)), x: x + 0.3 + j * 0.6, y: y + 0.3, w: 0.45, h: 0.45 }));
     s.addText(k.big, { ...T, x: x + 0.3, y: y + 0.8, w: tw - 0.6, h: 0.6, fontSize: 34, bold: true, color: C.dark });
     s.addText(k.small, { ...T, x: x + 0.3, y: y + 1.4, w: tw - 0.6, h: 0.35, fontSize: 12, color: C.mute });
   });
