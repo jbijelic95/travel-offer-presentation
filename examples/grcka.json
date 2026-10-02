@@ -1,0 +1,115 @@
+{
+  "narucitelj": "GIMNAZIJA VINKOVCI",
+  "brojPonude": "08/2018",
+  "naslov": "KLASIČNA GRČKA I ZAKYNTHOS",
+  "termin": "20.08. - 01.09.2019.",
+  "brojDana": 9,
+  "grupa": { "ucenici": 55, "nastavnici": 4, "ukupno": 59 },
+  "polazak": "VINKOVCI: Polazak autobusom ispred škole u kasnim večernjim satima.",
+  "prijevoz": { "vrste": ["autobus", "brod", "trajekt"] },
+  "dani": [
+    {
+      "redni": 1,
+      "oznaka": "1.DAN",
+      "tekst": "Vožnja autobusom kroz Hrvatsku, Sloveniju i Italiju do luke VENECIJA/ANCONA, uz mogućnost razgleda VENECIJE (ovisno o redu plovidbe): TRG I CRKVA SV. MARKA, DUŽDEVA PALAČA, MOST RIALTO, KANAL GRANDE, ZVONIK, TORANJ SA SATOM...Odlazak do putničke luke. Ukrcaj na brod. Smještaj grupe u četverokrevetnim unutarnjim kabinama. Plovidba brodom po Jadranskom moru u smjeru Grčke uz mogućnost korištenja svih pogodnosti koje nudi brod: restorani, caffe barovi, bazen, disko. Noćenje.",
+      "lokacije": ["Venecija", "Ancona"]
+    },
+    {
+      "redni": 2,
+      "oznaka": "2. DAN",
+      "tekst": "Doručak. Plovidba Jadranskim morem. Slobodno vrijeme za osobne programe. Uplovljavanje u luku PATRAS i nastavak putovanja autobusom do hotela u Patrasu. Smještaj u hotel. Večera. Večernji izlazak u dogovoru s grupom. Noćenje.",
+      "lokacije": ["Patras"]
+    },
+    {
+      "redni": 3,
+      "oznaka": "3. DAN",
+      "tekst": "Doručak. Nastavak vožnje Peloponezom do grčke luke Kyllini. Ukrcaj na trajekt. Dvosatna vožnja do Zakynthosa, rajskog otoka koji će vas odmah osvojiti. Iskrcaj iz broda i vožnja autobusom do mjesta Laganas-najveće i najživahnije ljetovalište na otoku s dugom pješčanom plažom. Smještaj u hotel, slobodno vrijeme do večere. Večernja zabava, noćenje.",
+      "lokacije": ["Kyllini", "Zakynthos", "Laganas"]
+    },
+    {
+      "redni": 4,
+      "oznaka": "4. DAN",
+      "tekst": "Doručak. Panoramska vožnja otokom do glavnog grada Zakynthosa, obilazak i razgled PLATEIA, stare gradske jezgre, tržnice i katedrale sv. Dionizia-zaštitnika otoka, slobodno vrijeme za osobne potrebe, povratak u Laganas, večera u hotelu. Navečer odlazak u jedan od mnogobrojnih noćnih klubova koje nudi Laganas! Noćenje.",
+      "lokacije": ["Zakynthos", "Laganas"]
+    },
+    {
+      "redni": 5,
+      "oznaka": "5. DAN",
+      "tekst": "Nakon doručka izlet po otoku. Fakultativno predlažemo odlazak do luke VROMI uz zaustavljanje u VOLIMESU. Po dolasku u luku ukrcaj na brodice. Plovidba do plaže Navaggio, slobodno vrijeme za kupanje, povratak u Laganas, večera u hotelu. Zabava. Noćenje.",
+      "lokacije": ["Volimes", "Vromi", "Navagio", "Laganas"]
+    },
+    {
+      "redni": 6,
+      "oznaka": "6. DAN",
+      "tekst": "Nakon doručka odlazak iz hotela te napuštanje Zakynthosa. Vožnja brodom do luke KYLLINI. Nastavak puta prema ATENI uz razgled najpoznatijih mjesta na Peloponezu: KORINTSKOG KANALA, EPIDAURUSA, razgled svetišta Asklepija, antičkog boga liječništva, muzeja i glasovitog TEATRA-najakustičnije građevine te vrste na svijetu. Dolazak u GLYFADU -predgrađe Atene, bogato plažama, barovima i klubovima. Smještaj u hotel. Večera. Nakon večere izlet duž ATENSKE RIVIJERE (APOLONOVA OBALA) do rta SOUNION i razgled POSEJDONOVA HRAMA. Povratak u hotel. Noćenje.",
+      "lokacije": ["Kyllini", "Korintski kanal", "Epidaur", "Glyfada", "Sounion"]
+    },
+    {
+      "redni": 7,
+      "oznaka": "7.DAN",
+      "tekst": "Doručak. Razgled Atene u pratnji lokalnog vodiča: AKROPOLA, ZEUSOV HRAM, HADRIJANOV SLAVOLUK, OLIMPIJSKI STADION, TRGOVI SINTAGMA I OMONIA, PARLAMENT, posjet NACIONALNOM ARHEOLOŠKOM MUZEJU. Slobodno poslije podne. Večera. Navečer zajednički odlazak s pratiteljem putovanja do četvrti Plaka - moguć fakultativni odlazak na grčku večeru s folklornim programom (uz doplatu). Povratak u hotel. Noćenje.",
+      "lokacije": ["Atena", "Plaka"]
+    },
+    {
+      "redni": 8,
+      "oznaka": "8. DAN",
+      "tekst": "Doručak, odjava iz hotela. Odlazak autobusom do jednog od najpoznatijih arheoloških lokaliteta u Grčkoj i nekad poznatog proročišta DELFI. Šetnja lokalitetom i razgled: riznica Atenjana, Apolonov hram, kazalište, stadion. Nastavak putovanja prema Makedoniji uz usputni posjet Kalambaci, vožnja preko Bitole do OHRIDA, dolazak u večernjim satima, smještaj u hotel. Večera u hotelu, odlazak u disco, noćenje.",
+      "lokacije": ["Delfi", "Kalambaka", "Bitola", "Ohrid"]
+    },
+    {
+      "redni": 9,
+      "oznaka": "9. DAN",
+      "tekst": "Doručak. Odjava iz hotela, razgled grada sa lokalnim vodičem. Odlazak do samostana Sv. Naum i posjet manastiru sv. Naum, slobodno vrijeme. Nastavak vožnje kroz nacionalni park Mavrovo, preko Skoplja i Kumanova do Bajakova uz usputno zaustavljanje za odmor. Dolazak u Vinkovce u kasnim večernjim satima.",
+      "lokacije": ["Ohrid", "Sveti Naum", "Mavrovo", "Skopje", "Kumanovo", "Bajakovo", "Vinkovci"]
+    }
+  ],
+  "cijena": {
+    "iznos": null,
+    "valuta": "EUR",
+    "tekst": "CIJENA PUTOVANJA NA BAZI 55 UČENIKA + 4 NASTAVNIKA...",
+    "baza": "na bazi 55 učenika + 4 nastavnika"
+  },
+  "ukljucuje": [
+    "prijevoz udobnim turističkim autobusom prema programu",
+    "stručnog pratitelja na cijelom putovanju",
+    "prijevoz brodom: VENECIJA/ANCONA-PATRAS",
+    "smještaj na brodu u četverokrevetnim unutrašnjim kabinama, tuš, wc",
+    "smještaj u hotelu*** u Ohridu, na osnovu 1 polupansiona",
+    "smještaj u hotelu*** u Laganasu, na osnovi 3 polupansiona",
+    "smještaj u hotelu*** u Glyfadi, na osnovu 2 polupansiona",
+    "sve ulaznice za muzeje i arheološke lokalitete u Grčkoj (Delfi, Akropola, Arheološki muzej Atena)",
+    "ulaznica u Sv. Naum",
+    "lokalni vodiči u Ohridu i Ateni",
+    "ulaznicu za disco u Ohridu",
+    "četiri mjesta za vođe puta škole s pripadajućim troškovima",
+    "dva gratis mjesta za učenike",
+    "razglede gradova prema programu",
+    "međunarodno zdravstveno osiguranje + osiguranje od posljedica nesretnog slučaja/nezgode",
+    "troškovi organizacije i rezervacije ekskurzije, osiguranje putnika i prtljage u busu, osiguranje odgovornosti i jamčevina (Croatia osiguranje d.d.)"
+  ],
+  "fakultativno": [
+    "izlet brodom na plažu Navaggio",
+    "doručak na brodu",
+    "ručak/večera na brodu"
+  ],
+  "placanje": [
+    "gotovinom, općom uplatnicom, internet bankarstvom ili uplatom na ž-r organizatora do polaska",
+    "Obročno do 6 rata, ZABA Maestro/Master, American i PBZ Maestro/Visa."
+  ],
+  "pogodnosti": [
+    "četiri mjesta za vođe puta škole s pripadajućim troškovima",
+    "dva gratis mjesta za učenike"
+  ],
+  "napomene": [
+    "PROGRAM PUTOVANJA I TERMIN REALIZACIJE PUTOVANJA OVISI O REDU PLOVIDBE, S OBZIROM DA BRODAR NIJE OBJAVIO RED PLOVIDBE ZA 2019. GODINU.",
+    "Izračun je rađen na osnovi 55 učenika s mogućnošću odstupanja za tri učenika.",
+    "PA Polet zadržava pravo izmjene redoslijeda obilazaka (ovisno o vremenskim uvjetima i radnom vremenu destinacija koje se obilaze) i cijene u slučaju izmjene broja putnika.",
+    "Hrvatskim državljanima je za ovo putovanje potrebna važeća osobna iskaznica ili putovnica.",
+    "Važeći su Opći uvjeti i upute za učenička putovanja / www.polet.hr"
+  ],
+  "meta": {
+    "izvorniNazivDatoteke": "grcka-gimnazija-9-dana.odt",
+    "ekstrakcijaModel": "rucno",
+    "upozorenjaEkstrakcije": ["Iznos cijene nije upisan u ponudi."]
+  }
+}

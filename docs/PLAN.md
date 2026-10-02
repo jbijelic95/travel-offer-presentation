@@ -44,7 +44,7 @@ Načela:
 | Ikone | react-icons → SVG → PNG (sharp) u build-time, spremljene u `assets/icons/` | ne renderirati ikone na svaki request |
 | Deploy | Docker (node + libreoffice) na Hetzner CX22 / Fly.io / Railway | treba LibreOffice, znači vlastiti container, ne serverless |
 | Auth | jedan zajednički pristupni ključ (basic auth ili `?key=` u cookieju) | javni URL, jedan korisnik; dovoljno |
-| Testovi | Vitest; fixtures = 10–15 starih ponuda s Drivea + očekivani JSON | ekstrakcija se mora regresijski testirati |
+| Testovi | nema automatskih testova; provjera je ručna (otvoriti .pptx, pregledati JSON) | odluka vlasnika projekta |
 
 ## 3. `Ponuda` JSON shema (ugovor)
 
@@ -97,9 +97,8 @@ Pravila za LLM (u system promptu):
 
 - Renderer je deterministički kod (koordinate, boje, fontovi, redoslijed slajdova hardkodirani). Isti JSON → identičan .pptx. LLM ne zna da .pptx postoji.
 - Skup i redoslijed slajdova su fiksni; varira samo broj slajdova s danima, po pravilu (2 po slajdu).
-- Rubni slučajevi (predug dan, više varijanti cijene, prazna sekcija) su `if` grane u kodu s testom, ne odluke LLM-a.
-- Ekstrakcija: `temperature: 0`, pravilo po polju u promptu, fixtures s očekivanim JSON-om za regresiju.
-- Snapshot testovi slajdova (vidi M1) hvataju svaku nenamjernu promjenu izgleda.
+- Rubni slučajevi (predug dan, više varijanti cijene, prazna sekcija) su `if` grane u kodu, ne odluke LLM-a.
+- Ekstrakcija: `temperature: 0`, pravilo po polju u promptu.
 
 ## 4. Validacija (deterministička, vraća upozorenja)
 
@@ -164,7 +163,8 @@ ponuda-prezentacija/
   config/lokacije.json   aliasi lokacija → mape fotki
   assets/logo/ assets/cert/ assets/icons/ assets/foto/
   public/index.html      UI
-  test/fixtures/*.odt|doc|pdf + *.expected.json
+  examples/*.json        ručno napisane Ponuda JSON datoteke (ulaz za `npm run render`)
+  test/fixtures/         uzorci ponuda i referentne prezentacije (samo za ručnu usporedbu)
   Dockerfile             node:22 + libreoffice-writer + fonts (Carlito za Calibri)
   CLAUDE.md
 ```
@@ -172,21 +172,20 @@ ponuda-prezentacija/
 ## 8. Milestones (redoslijed za Claude Code)
 
 **M1 — Renderer iz JSON-a** (bez LLM-a)
-- Scaffold repo, TS, Vitest, Dockerfile.
+- Scaffold repo, TS (bez testova; Dockerfile u M4).
 - Zod shema `Ponuda`.
-- Port `build.js` → `render()`; ručno napisan `grcka.json` i `budimpesta.json` kao ulaz.
-- Test: render ne baca, validate.py prolazi, vizualni pregled.
-- **Snapshot testovi:** za svaku fixture renderirati slajdove u PNG (soffice → pdftoppm) i usporediti s referentnim slikama (pixelmatch). Svaka promjena izgleda mora biti namjerna i vidljiva u diffu.
-- ✅ Kad: `npm run render grcka.json` da isti .pptx kao nacrt.
+- Port `build.js` → `render()`; ručno napisan `examples/grcka.json` i `examples/budimpesta.json` kao ulaz.
+- Provjera: ručni vizualni pregled u PowerPointu.
+- ✅ Kad: `npm run render examples/grcka.json` da isti .pptx kao nacrt.
 
 **M2 — Konverzija + ekstrakcija**
 - `convert()` za odt/docx (XML) i doc/pdf (soffice).
 - `extract()` s Claude API, structured output.
-- Skinuti 12 ponuda s Drivea kao fixtures (raznih godina, s/bez cijene, s 2 varijante hotela, kn i €), ručno napisati expected JSON za 5.
-- ✅ Kad: 5/5 fixtures prolazi (tolerancija: whitespace, redoslijed lista).
+- Skinuti 12 ponuda s Drivea kao uzorke (raznih godina, s/bez cijene, s 2 varijante hotela, kn i €).
+- ✅ Kad: ručni pregled JSON-a za 5 uzoraka ne pokaže izmišljene ni izgubljene podatke.
 
 **M3 — Validacija**
-- Pravila iz §4, unit testovi na fixtures.
+- Pravila iz §4.
 
 **M4 — Web + API + deploy**
 - `index.html`: drag&drop, progress, lista upozorenja, gumb download.
