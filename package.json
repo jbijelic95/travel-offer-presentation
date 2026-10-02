@@ -12,6 +12,7 @@
     "render": "tsx src/cli/render.ts"
   },
   "dependencies": {
+    "jszip": "^3.10.2",
     "pptxgenjs": "^4.0.1",
     "zod": "^4.6.5"
   },

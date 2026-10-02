@@ -1,0 +1,58 @@
+{
+  "narucitelj": "Gimnazija Matija Antun Reljković, VINKOVCI",
+  "brojPonude": "08/2018",
+  "naslov": "BUDIMPEŠTA",
+  "termin": "13.04. – 14.04.2019.",
+  "brojDana": 2,
+  "grupa": { "nastavnici": 3 },
+  "prijevoz": { "vrste": ["autobus"] },
+  "dani": [
+    {
+      "redni": 1,
+      "oznaka": "1.Dan",
+      "datum": "13.4.2019., subota",
+      "tekst": "Polazak iz Vinkovaca s dogovorenog mjesta u 06:00 sati. Vožnja prema BUDIMPEŠTI. Po dolasku razgledavanje Pešte autobusom i pješice: PARLAMENT, OPERA, CRKVA SV. STJEPANA, AVENIJA ANDRASSY, TRG HEROJA SA MILENIJSKIM SPOMENIKOM. Šetnja najpoznatijom ulicom u Budimpešti VACI ULICOM koja obiluje trgovinama i kafićima. Na kraju ulice je trg Vorosmarty na kojem se nalazi čuvena slastičarna Gerbeaud s ukusnim kolačima. Smještaj u HOTELU DRIVE INN*** - smještaj u dvokrevetnim i trokrevetnim sobama, WiFi, doručak – švedski stol, večera. Večernji izlazak u dogovoru s grupom. Noćenje.",
+      "lokacije": ["Budimpešta"]
+    },
+    {
+      "redni": 2,
+      "oznaka": "2.dan",
+      "datum": "14.04.2019., nedjelja",
+      "tekst": "Doručak. Napuštanje hotela i vožnja do BUDIMA. Šetnja i obilazak: KRALJEVSKA PALAČA, CRKVA KRALJA MATIJE KORVINA i RIBARSKA UTVRDA. Slobodno vrijeme za kavu i kolač. Odlazak do brda GELLERT, gdje se nalazi CITADELA, budimska utvrda s koje se pruža jedan od najljepših pogleda na grad. Polazak iz Budimpešte uz zaustavljanje u TROPICARIUM. Obilazak najvećeg morskog akvarija srednje Europe s tisućama obojenih riba, životinja koje žive u tropskim prašumama, morskih pasa. Slobodno vrijeme za obilazak shopping centra. Nastavak vožnje prema Hrvatskoj, povratak u Vinkovce u večernjim satima.",
+      "lokacije": ["Budim", "Gellert", "Tropicarium", "Vinkovci"]
+    }
+  ],
+  "cijena": {
+    "iznos": null,
+    "valuta": "EUR",
+    "tekst": "CIJENA OVOG PUTOVANJA JE 545Kn"
+  },
+  "ukljucuje": [
+    "prijevoz turističkim autobusom prema programu",
+    "stručnog vodiča, te pratitelje putovanja (3 profesora)",
+    "3 gratis mjesta za učenike",
+    "1 polupansion u hotelu DRIVE INN*** ili SWING*** u Budimpešti"
+  ],
+  "neUkljucuje": [
+    "ulaznice za muzeje i kulturno – povijesne spomenike",
+    "ulaznicu u Tropicarium",
+    "karte za javni prijevoz",
+    "vožnju brodom po Dunavu – cca. 60kn"
+  ],
+  "placanje": [
+    "Plaćanje u više mjesečnih obroka do polaska: gotovina, internet bankarstvo, žiro račun, opća uplatnica",
+    "Obročno do 6 rata: ZABA: Maestro, Mastercard; PBZ: Visa, Maestro i American"
+  ],
+  "pogodnosti": [
+    "3 gratis mjesta za učenike",
+    "povrat uplaćenog novca u slučaju opravdanog razloga odustajanja: bolest dokumentirana liječničkom dokumentacijom, elementarna nepogoda, nesretan slučaj u obitelji"
+  ],
+  "meta": {
+    "izvorniNazivDatoteke": "budimpesta-stara-prezentacija.pptx",
+    "ekstrakcijaModel": "rucno",
+    "upozorenjaEkstrakcije": [
+      "Cijena je u kunama (545 kn); iznos u EUR nije upisan.",
+      "Prepisano iz stare prezentacije, ne iz izvorne ponude."
+    ]
+  }
+}

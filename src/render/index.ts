@@ -2,6 +2,7 @@ import { PptxGenJS } from "./pptx.js";
 import type { Agencija } from "../config.js";
 import type { Ponuda } from "../schema/ponuda.js";
 import type { Ctx } from "./parts.js";
+import { deterministic } from "./deterministic.js";
 import { cijena } from "./slides/cijena.js";
 import { dani } from "./slides/dani.js";
 import { hvala } from "./slides/hvala.js";
@@ -22,5 +23,5 @@ export async function render(p: Ponuda, a: Agencija): Promise<Buffer> {
   const ctx: Ctx = { pres, p, a };
   for (const slide of SLIDES) slide(ctx);
 
-  return (await pres.write({ outputType: "nodebuffer" })) as Buffer;
+  return deterministic((await pres.write({ outputType: "nodebuffer" })) as Buffer);
 }
