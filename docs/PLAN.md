@@ -59,6 +59,10 @@ type Ponuda = {
   brojDana?: number;               // izvedeno iz programa
   grupa?: { ucenici?: number; nastavnici?: number; ukupno?: number; opis?: string };
   polazak?: string;                // tekst prije "1. dan" ("Polazak ispred škole u 21:00")
+  prijevoz?: {                     // LLM klasificira iz teksta; opis doslovno ako postoji rečenica o prijevozu
+    vrste: ("autobus" | "brod" | "trajekt" | "avion" | "vlak")[];
+    opis?: string;
+  };
   dani: Array<{
     redni: number;                 // 1..n
     oznaka: string;                // "1. dan" / "PRVI DAN" — kako piše
@@ -127,7 +131,10 @@ Port `build.js` iz nacrta u `src/render/`:
 - Fiksni sadržaj (o agenciji, certifikati, kontakt, pogodnosti koje nisu u ponudi) u `config/agencija.json` — mama/ti mijenjate bez koda.
 - Program po danima: 2 dana po slajdu; ako tekst dana > ~900 znakova, taj dan sam na slajdu. Font se ne smanjuje ispod 12 pt — radije novi slajd.
 - Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke.
-- "Ukratko" slajd: brojke se računaju iz JSON-a (`dani.length`, broj noćenja = broj pojavljivanja "noćenje" u danima, grupa); ruta = prva lokacija po danu, deduplicirano.
+- "Ukratko" slajd: 4 fiksne kartice, sve izračunate u kodu, nikad iz slobodnog teksta LLM-a: (1) dani = `dani.length`, (2) noćenja = broj dana čiji `tekst` sadrži "noćenje", (3) grupa = `grupa` ili `cijena.baza`, (4) prijevoz = `prijevoz.vrste` (ikona i naslov po enumu). Kartica čiji podatak fali se izostavlja (3 kartice umjesto 4) — ništa se ne izmišlja. Ruta = prva lokacija po danu, deduplicirano.
+- `placanje` i `pogodnosti`: obične liste (`string[]`), jedna ikona po sekciji. Bez biranja ikona po ključnim riječima.
+- Kontakt na "Hvala" slajdu: uvijek iz `config/agencija.json`, nikad iz `potpis`.
+- Opće pravilo: shema sadrži samo ono što doslovno piše u ponudi (plus enume koje LLM klasificira). Sva logika prikaza je u kodu; kad podatak fali, element se izostavi.
 - Fotografije: `assets/foto/<lokacija>/*.jpg`; za svaki dan uzmi prvu lokaciju koja ima mapu; nema fotke → placeholder ostaje. Mapiranje `lokacije → mapa` preko `config/lokacije.json` (aliasi: "atena" → "Atena", "budimpesta" → "Budimpešta").
 - Optimizacija slika: sharp resize na max 1600 px, JPEG q80 (stare prezentacije su bile 22–53 MB).
 
