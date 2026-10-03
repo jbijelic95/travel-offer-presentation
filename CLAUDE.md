@@ -1,6 +1,6 @@
 # travel-offer-presentation
 
-Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.doc/.docx/.pdf) jednim klikom generira .pptx prezentaciju po fiksnom templateu.
+Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.docx/.pdf; .doc nije podržan) jednim klikom generira .pptx prezentaciju po fiksnom templateu.
 
 **Prvo pročitaj `docs/PLAN.md`** — arhitektura, tehnologija, JSON shema `Ponuda`, validacijska pravila, milestones (M1–M5). Plan je izvor istine; ako ga kod mijenja, ažuriraj i plan.
 
@@ -12,7 +12,8 @@ Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.doc/.docx/.pdf
 - `examples/*.json` — ručno napisane ponude; `examples/*.sha256` — očekivani hash renderiranog .pptx
 - `assets/logo/`, `assets/cert/` — logo i certifikati izrezani iz stare prezentacije (jedino što imamo; zamijeniti kad stignu bolji)
 - `assets/icons/` — ikone kao PNG, generirane s `npm run icons`
-- `test/fixtures/grcka-gimnazija-9-dana.odt` — prva fixture ponuda (bez upisane cijene — namjerno, test za validaciju)
+- `test/fixtures/` — uzorci ponuda s Drivea, opis u `test/fixtures/README.md`; `examples/grcka.json` je očekivana ekstrakcija za `2019-gimnazija-grcka-bez-cijene.odt`
+- `test/fixtures/unsupported/` — .doc uzorci, samo kao tekst
 - `test/fixtures/reference/` — stara prezentacija agencije (kako je izgledalo) i nacrt v1 (kako treba izgledati)
 
 ## Pravila

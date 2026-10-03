@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit",
     "icons": "tsx scripts/build-icons.ts",
     "render": "tsx src/cli/render.ts",
-    "check": "tsx src/cli/check.ts"
+    "check": "tsx src/cli/check.ts",
+    "extract": "tsx src/cli/extract.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.131.0",
     "jszip": "^3.10.2",
     "pptxgenjs": "^4.0.1",
     "zod": "^4.6.5"

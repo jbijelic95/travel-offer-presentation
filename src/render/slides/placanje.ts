@@ -9,7 +9,7 @@ export function placanje(ctx: Ctx): void {
   if (!p.placanje.length && !pogodnosti.length) return;
 
   const s = newSlide(ctx);
-  title(s, "Način plaćanja i pogodnosti");
+  title(s, pogodnosti.length ? "Način plaćanja i pogodnosti" : "Način plaćanja");
 
   if (p.placanje.length) {
     const w = 5.8, tw = 4.6, pt = 13;

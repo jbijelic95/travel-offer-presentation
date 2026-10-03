@@ -1,6 +1,6 @@
 # Ponuda → Prezentacija — plan implementacije
 
-Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.doc/.docx/.pdf) jednim klikom napraviti gotovu .pptx prezentaciju po fiksnom templateu.
+Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.docx/.pdf) jednim klikom napraviti gotovu .pptx prezentaciju po fiksnom templateu.
 
 Korisnik: jedna osoba (mama), ne-tehnička, radi u pregledniku. Nema Claude račun. Ponuda je prilikom učitavanja već pregledana i konačna.
 
@@ -15,8 +15,8 @@ Tok iz njezine perspektive: **otvori stranicu → povuče ponudu → klikne "Kre
    │ POST /api/generate (multipart, file)
    ▼
 [Node servis]
-   1. convert   ponuda → čisti tekst        (LibreOffice headless; .odt/.docx i direktno iz XML-a)
-   2. extract   tekst → Ponuda JSON          (Claude API, structured output po JSON shemi)
+   1. convert   ponuda → čisti tekst        (.odt/.docx: direktno iz XML-a; .pdf ostaje PDF)
+   2. extract   tekst/PDF → Ponuda JSON      (Claude API, structured output po JSON shemi; PDF kao document blok)
    3. validate  Ponuda JSON → upozorenja[]   (deterministička pravila, bez LLM-a)
    4. render    Ponuda JSON → .pptx          (pptxgenjs, fiksni template)
    │
@@ -37,12 +37,12 @@ Načela:
 | Runtime | Node 22 + TypeScript | pptxgenjs je Node lib, generator već postoji u Node-u; jedan jezik za sve |
 | HTTP | Fastify (ili Hono) | minimalan, multipart out-of-box |
 | Frontend | jedna statična HTML stranica (vanilla TS + malo CSS), servira je isti proces | jedan upload i jedan gumb ne opravdavaju React/Next |
-| Konverzija | LibreOffice headless (`soffice --convert-to txt`) u Dockeru; za .odt/.docx fallback čitanje `content.xml` / `document.xml` direktno | .doc (binarni Word) i .pdf nemaju čist JS parser; soffice pokriva sve formate koje mama koristi |
-| Ekstrakcija | `@anthropic-ai/sdk`, Claude Sonnet, tool-use / structured output s JSON shemom | robusno na varijacije u ponudama; cijena po ponudi zanemariva |
+| Konverzija | .odt/.docx: čitanje `content.xml` / `document.xml` direktno (jszip); .pdf: bez konverzije, šalje se Claudeu kao `document` blok | bez LibreOffice-a; API sam čita PDF. .doc (binarni Word) nije podržan — mama ga sprema kao .odt/.docx |
+| Ekstrakcija | `@anthropic-ai/sdk`, najnoviji Claude Sonnet (točan ID fiksiran u `config/extract.json`, sada `claude-sonnet-5-5`), structured output (`output_config.format`) s JSON shemom | robusno na varijacije u ponudama; cijena po ponudi oko 0,10 $ |
 | Shema/validacija | Zod (shema se generira u JSON Schema za Claude i koristi za runtime validaciju) | jedan izvor istine |
 | Renderer | pptxgenjs (port postojećeg `build.js`) | već napravljen i testiran template |
 | Ikone | react-icons → SVG → PNG (sharp) u build-time, spremljene u `assets/icons/` | ne renderirati ikone na svaki request |
-| Deploy | Docker (node + libreoffice) na Hetzner CX22 / Fly.io / Railway | treba LibreOffice, znači vlastiti container, ne serverless |
+| Deploy | Docker (samo node) na Hetzner CX22 / Fly.io / Railway | jedan proces, privremene datoteke na disku; bez LibreOffice-a |
 | Auth | jedan zajednički pristupni ključ (basic auth ili `?key=` u cookieju) | javni URL, jedan korisnik; dovoljno |
 | Testovi | nema unit testova; `npm run check` uspoređuje SHA-256 renderiranih primjera, ostalo je ručni pregled | odluka vlasnika projekta |
 
@@ -80,7 +80,7 @@ type Ponuda = {
   neUkljucuje: string[];           // s cijenama ulaznica ako pišu
   fakultativno: string[];          // "doplate prema želji grupe"
   placanje: string[];              // stavke kako pišu
-  pogodnosti: string[];            // gratis mjesta, povrat novca... ako pišu u ponudi
+  pogodnosti: string[];            // samo iz izričite sekcije "Agencija odobrava" / "Pogodnosti", inače []
   napomene: string[];
   potpis?: { ime?: string; tel?: string; email?: string; datum?: string };
   meta: { izvorniNazivDatoteke: string; ekstrakcijaModel: string; upozorenjaEkstrakcije: string[] };
@@ -91,14 +91,21 @@ Pravila za LLM (u system promptu):
 - Tekst dana, stavki "uključuje/ne uključuje", plaćanja i napomena prepisuje **doslovno**, bez prepričavanja i bez "poboljšanja". Dopušteno: ukloniti višestruke razmake, popraviti očiti tipfeler (`Plačanja` → `Plaćanja`).
 - Ne izmišlja: ako cijena ne piše, `cijena.iznos` je `null`, `cijena.tekst` je ono što piše ("CIJENA PUTOVANJA NA BAZI 55 UČENIKA...").
 - Osiguranje/jamčevina (Croatia osiguranje, brojevi polica) ide u `ukljucuje` kao jedna stavka, skraćeno.
-- `lokacije` = imena gradova/lokaliteta iz teksta dana, normalizirana (nominativ, bez velikih slova).
+- `lokacije` = imena gradova/lokaliteta iz teksta dana, normalizirana (nominativ, bez velikih slova). **Prva lokacija je glavno odredište dana**: mjesto gdje se odvija većina programa; na danu putovanja mjesto gdje dan završava. Ruta na slajdu "Ukratko" = prva lokacija svakog dana.
+- **Svaka rečenica ponude ide u točno jedno polje**, prema tome gdje stoji u ponudi. Nema dupliciranja (npr. "dva gratis mjesta" u listi "Cijena uključuje" ide samo u `ukljucuje`).
+- `pogodnosti` samo iz izričite sekcije ("Agencija odobrava", "Pogodnosti"); ako je nema, `[]`.
+- `polazak` = samo tekst prije prvog zaglavlja dana. Tekst ispod "1. dan" ostaje u danu 1.
+- Cijena u kunama ("545Kn"): `iznos` = `null`, `valuta` = "EUR", `tekst` kako piše, plus redak u `meta.upozorenjaEkstrakcije`. Nikad ne preračunava valute.
+- `meta.izvorniNazivDatoteke` i `meta.ekstrakcijaModel` popunjava kod, ne LLM. Kod postavlja i `brojDana` (= `dani.length`) i `valuta` ("EUR").
+- Shema koju LLM dobiva (`src/extract/index.ts`, `Ekstrakcija`) je ravna: sva polja obavezna, bez `null`. Prazno = `""` / `0` / `[]`, a kod to pretvara u polje koje nedostaje prije `Ponuda.parse`. Razlog: opcionalna polja i unije prerastu gramatiku structured outputa (API vraća 400 "Schema is too complex").
+- Tekst koji ne pripada nijednoj sekciji ide u `napomene`; ništa se ne izbacuje.
 
 ## 3a. Garancije konzistentnosti
 
 - Renderer je deterministički kod (koordinate, boje, fontovi, redoslijed slajdova hardkodirani). Isti JSON → identičan .pptx. LLM ne zna da .pptx postoji.
 - Skup i redoslijed slajdova su fiksni; varira samo broj slajdova s danima, po pravilu (2 po slajdu).
 - Rubni slučajevi (predug dan, više varijanti cijene, prazna sekcija) su `if` grane u kodu, ne odluke LLM-a.
-- Ekstrakcija: `temperature: 0`, pravilo po polju u promptu.
+- Ekstrakcija: model fiksiran točnim ID-om, pravilo po polju u promptu, shema nameće strukturu. `temperature` se ne šalje ako je model ne prihvaća (Sonnet 5.5 vraća 400 na bilo koju vrijednost osim zadane). LLM izlaz zato nije bajt-identičan između pokretanja; renderer jest.
 
 ## 4. Validacija (deterministička, vraća upozorenja)
 
@@ -149,7 +156,7 @@ GET  /api/download/:id    .pptx (ime: "<naslov> – <narucitelj>.pptx"), briše 
 POST /api/extract         (debug) → Ponuda JSON, za razvoj i testove
 ```
 
-Ograničenja: max 20 MB upload, samo .odt/.doc/.docx/.pdf, timeout 120 s.
+Ograničenja: max 20 MB upload, samo .odt/.docx/.pdf (.doc se odbija s porukom "Spremite ponudu kao .odt ili .docx"), timeout 120 s.
 
 ## 7. Struktura repozitorija
 
@@ -157,21 +164,23 @@ Ograničenja: max 20 MB upload, samo .odt/.doc/.docx/.pdf, timeout 120 s.
 ponuda-prezentacija/
   src/
     server.ts            Fastify, rute, static
-    convert/             soffice wrapper + odt/docx XML fallback
+    convert/             odt/docx → tekst iz XML-a; pdf prolazi kao PDF
     extract/             claude klijent, system prompt, shema → JSON schema
     validate/            pravila
     render/              pptxgenjs template (po slajdu)
     schema/ponuda.ts     Zod
-    cli/                 render.ts (npm run render), check.ts (npm run check)
+    cli/                 render.ts (npm run render), check.ts (npm run check), extract.ts (npm run extract)
   scripts/build-icons.ts react-icons → PNG u assets/icons/ (npm run icons)
   config/agencija.json   kontakt, o agenciji, certifikati
+  config/extract.json    točan ID Claude modela za ekstrakciju
   config/lokacije.json   aliasi lokacija → mape fotki
   assets/logo/ assets/cert/ assets/icons/ assets/foto/
   public/index.html      UI
   examples/*.json        ručno napisane Ponuda JSON datoteke (ulaz za `npm run render`)
   examples/*.sha256      očekivani SHA-256 renderiranog .pptx (za `npm run check`)
   test/fixtures/         uzorci ponuda i referentne prezentacije (samo za ručnu usporedbu)
-  Dockerfile             node:22 + libreoffice-writer + fonts (Carlito za Calibri)
+  test/fixtures/unsupported/  .doc uzorci, samo kao tekst (alat ih ne čita)
+  Dockerfile             node:22
   CLAUDE.md
 ```
 
@@ -186,9 +195,10 @@ ponuda-prezentacija/
 - ✅ Kad: `npm run check` prolazi, a `out/grcka.pptx` izgleda kao nacrt `test/fixtures/reference/grcka-nacrt-v1.pptx` (sadržaj kartica i lista po pravilima iz §5).
 
 **M2 — Konverzija + ekstrakcija**
-- `convert()` za odt/docx (XML) i doc/pdf (soffice).
+- `convert()` za odt/docx (XML); pdf ide Claudeu kao `document` blok.
 - `extract()` s Claude API, structured output.
-- Skinuti 12 ponuda s Drivea kao uzorke (raznih godina, s/bez cijene, s 2 varijante hotela, kn i €).
+- `npm run extract -- <ponuda> [--pptx]` → `out/<ime>.json` (i `out/<ime>.pptx`).
+- ✅ Uzorci s Drivea u `test/fixtures/` (.doc u `unsupported/`).
 - ✅ Kad: ručni pregled JSON-a za 5 uzoraka ne pokaže izmišljene ni izgubljene podatke.
 
 **M3 — Validacija**
@@ -205,7 +215,7 @@ ponuda-prezentacija/
 - Novi logo / boje ako ih agencija promijeni — samo `config` + `assets`.
 
 ## 9. Otvorena pitanja (odgovoriti prije M2)
-1. Koje formate mama stvarno predaje danas? (Drive: većina .odt, dio .doc) — ako je uvijek .odt, soffice u Dockeru je opcionalan.
+1. ~~Formati~~ — odgovoreno: podržani su samo .odt, .docx i .pdf. .doc nije podržan; bez LibreOffice-a.
 2. ~~Cijena~~ — odgovoreno: uvijek EUR.
 3. Gdje hostati — imaš li već VPS?
-4. Treba li i PDF export prezentacije uz .pptx? (soffice već u containeru → trivijalno.)
+4. Treba li i PDF export prezentacije uz .pptx? (Bez soffice-a u containeru to više nije besplatno.)

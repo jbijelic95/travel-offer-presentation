@@ -24,7 +24,7 @@
       "redni": 3,
       "oznaka": "3. DAN",
       "tekst": "Doručak. Nastavak vožnje Peloponezom do grčke luke Kyllini. Ukrcaj na trajekt. Dvosatna vožnja do Zakynthosa, rajskog otoka koji će vas odmah osvojiti. Iskrcaj iz broda i vožnja autobusom do mjesta Laganas-najveće i najživahnije ljetovalište na otoku s dugom pješčanom plažom. Smještaj u hotel, slobodno vrijeme do večere. Večernja zabava, noćenje.",
-      "lokacije": ["Kyllini", "Zakynthos", "Laganas"]
+      "lokacije": ["Zakynthos", "Laganas", "Kyllini"]
     },
     {
       "redni": 4,
@@ -36,13 +36,13 @@
       "redni": 5,
       "oznaka": "5. DAN",
       "tekst": "Nakon doručka izlet po otoku. Fakultativno predlažemo odlazak do luke VROMI uz zaustavljanje u VOLIMESU. Po dolasku u luku ukrcaj na brodice. Plovidba do plaže Navaggio, slobodno vrijeme za kupanje, povratak u Laganas, večera u hotelu. Zabava. Noćenje.",
-      "lokacije": ["Volimes", "Vromi", "Navagio", "Laganas"]
+      "lokacije": ["Navagio", "Vromi", "Volimes", "Laganas"]
     },
     {
       "redni": 6,
       "oznaka": "6. DAN",
       "tekst": "Nakon doručka odlazak iz hotela te napuštanje Zakynthosa. Vožnja brodom do luke KYLLINI. Nastavak puta prema ATENI uz razgled najpoznatijih mjesta na Peloponezu: KORINTSKOG KANALA, EPIDAURUSA, razgled svetišta Asklepija, antičkog boga liječništva, muzeja i glasovitog TEATRA-najakustičnije građevine te vrste na svijetu. Dolazak u GLYFADU -predgrađe Atene, bogato plažama, barovima i klubovima. Smještaj u hotel. Večera. Nakon večere izlet duž ATENSKE RIVIJERE (APOLONOVA OBALA) do rta SOUNION i razgled POSEJDONOVA HRAMA. Povratak u hotel. Noćenje.",
-      "lokacije": ["Kyllini", "Korintski kanal", "Epidaur", "Glyfada", "Sounion"]
+      "lokacije": ["Glyfada", "Kyllini", "Korintski kanal", "Epidaur", "Sounion"]
     },
     {
       "redni": 7,
@@ -96,10 +96,7 @@
     "gotovinom, općom uplatnicom, internet bankarstvom ili uplatom na ž-r organizatora do polaska",
     "Obročno do 6 rata, ZABA Maestro/Master, American i PBZ Maestro/Visa."
   ],
-  "pogodnosti": [
-    "četiri mjesta za vođe puta škole s pripadajućim troškovima",
-    "dva gratis mjesta za učenike"
-  ],
+  "pogodnosti": [],
   "napomene": [
     "PROGRAM PUTOVANJA I TERMIN REALIZACIJE PUTOVANJA OVISI O REDU PLOVIDBE, S OBZIROM DA BRODAR NIJE OBJAVIO RED PLOVIDBE ZA 2019. GODINU.",
     "Izračun je rađen na osnovi 55 učenika s mogućnošću odstupanja za tri učenika.",
@@ -108,7 +105,7 @@
     "Važeći su Opći uvjeti i upute za učenička putovanja / www.polet.hr"
   ],
   "meta": {
-    "izvorniNazivDatoteke": "grcka-gimnazija-9-dana.odt",
+    "izvorniNazivDatoteke": "2019-gimnazija-grcka-bez-cijene.odt",
     "ekstrakcijaModel": "rucno",
     "upozorenjaEkstrakcije": ["Iznos cijene nije upisan u ponudi."]
   }
