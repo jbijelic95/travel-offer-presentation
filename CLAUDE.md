@@ -8,9 +8,9 @@ Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.docx/.pdf; .do
 - `docs/PLAN.md` — plan implementacije
 - `src/schema/ponuda.ts` — Zod shema `Ponuda` (ugovor ekstrakcija ↔ renderer)
 - `src/render/` — renderer (pptxgenjs), jedan modul po slajdu u `slides/`
-- `config/agencija.json` — kontakt, "o agenciji", certifikati
+- `config/agencija.json` — kontakt, "o agenciji"
 - `examples/*.json` — ručno napisane ponude; `examples/*.sha256` — očekivani hash renderiranog .pptx
-- `assets/logo/`, `assets/cert/` — logo i certifikati izrezani iz stare prezentacije (jedino što imamo; zamijeniti kad stignu bolji)
+- `assets/logo/` — logo izrezan iz stare prezentacije (jedino što imamo; zamijeniti kad stignu bolji)
 - `assets/icons/` — ikone kao PNG, generirane s `npm run icons`
 - `test/fixtures/` — uzorci ponuda s Drivea, opis u `test/fixtures/README.md`; `examples/grcka.json` je očekivana ekstrakcija za `2019-gimnazija-grcka-bez-cijene.odt`
 - `test/fixtures/unsupported/` — .doc uzorci, samo kao tekst

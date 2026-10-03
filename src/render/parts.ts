@@ -37,6 +37,28 @@ export function img(file: string): string {
   return d;
 }
 
+/** Pixel size from the PNG or JPEG header. */
+function imageSize(file: string): { w: number; h: number } {
+  const b = readFileSync(file);
+  if (b.readUInt32BE(0) === 0x89504e47) return { w: b.readUInt32BE(16), h: b.readUInt32BE(20) };
+  for (let i = 2; i + 9 < b.length; ) {
+    if (b[i] !== 0xff) throw new Error(`Neispravan JPEG: ${file}`);
+    const marker = b[i + 1]!;
+    // SOF0..SOF15 hold the frame size; C4 (DHT), C8 (JPG) and CC (DAC) do not.
+    if (marker >= 0xc0 && marker <= 0xcf && marker !== 0xc4 && marker !== 0xc8 && marker !== 0xcc)
+      return { w: b.readUInt16BE(i + 7), h: b.readUInt16BE(i + 5) };
+    i += 2 + b.readUInt16BE(i + 2);
+  }
+  throw new Error(`Ne mogu pročitati veličinu slike: ${file}`);
+}
+
+/** Image that fills the box, cropped in the centre (CSS object-fit: cover). */
+export function coverImage(s: Slide, file: string, x: number, y: number, w: number, h: number): void {
+  const px = imageSize(file);
+  // pptxgenjs takes the image aspect from w/h and the box from sizing.
+  s.addImage({ data: img(file), x, y, w, h: (w * px.h) / px.w, sizing: { type: "cover", w, h } });
+}
+
 export function newSlide(ctx: Ctx, dark = false): Slide {
   const s = ctx.pres.addSlide();
   s.background = { color: dark ? C.dark : C.white };
@@ -49,9 +71,9 @@ export function footer(ctx: Ctx, s: Slide): void {
   s.addText(`${k.web}  ·  ${k.tel}`, { ...T, x: W - M - 4, y: H - 0.65, w: 4, h: 0.35, align: "right", fontSize: 10, color: C.mute });
 }
 
-export function title(s: Slide, t: string, sub?: string): void {
-  s.addText(t, { ...T, x: M, y: 0.45, w: W - 2 * M, h: 0.7, fontSize: 30, bold: true, color: C.dark });
-  if (sub) s.addText(sub, { ...T, x: M, y: 1.1, w: W - 2 * M, h: 0.35, fontSize: 13, color: C.mute });
+export function title(s: Slide, t: string, sub?: string, w = W - 2 * M): void {
+  s.addText(t, { ...T, x: M, y: 0.45, w, h: 0.7, fontSize: 30, bold: true, color: C.dark });
+  if (sub) s.addText(sub, { ...T, x: M, y: 1.1, w, h: 0.35, fontSize: 13, color: C.mute });
 }
 
 /** Small red section label ("CIJENA UKLJUČUJE"). */

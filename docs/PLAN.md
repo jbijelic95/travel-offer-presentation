@@ -135,7 +135,8 @@ Prikaz: iznad gumba za download, žuta/crvena lista. Uz svaku poruku broj slajda
 `src/render/` (port nacrta `prototype/build.js`, obrisan nakon M1):
 - `render(ponuda: Ponuda, agencija: Agencija): Promise<Buffer>`
 - Jedan modul po tipu slajda: `naslovna`, `ukratko`, `oAgenciji`, `dani`, `cijena`, `placanje`, `napomene`, `hvala`.
-- Fiksni sadržaj agencije u `config/agencija.json`: kontakt, "o agenciji" i certifikati. Ništa više. Pogodnosti dolaze samo iz ponude.
+- Fiksni sadržaj agencije u `config/agencija.json`: kontakt i "o agenciji" (do 3 prednosti i jedna fotka). Ništa više.
+- Slajd "Zašto Polet Vinkovci?": lijevo naslov i prednosti jedna ispod druge, desno fotka od vrha do desnog ruba, iznad footera. Fotka je `oAgenciji.foto` (put unutar `assets/`), obrezana po sredini da popuni okvir; dok je nema, stoji placeholder. Pogodnosti dolaze samo iz ponude.
 - Determinizam: datumi u `docProps/core.xml` i u zip zapisima su fiksni (`src/render/deterministic.ts`), pa isti JSON daje isti SHA-256.
 - Program po danima: 2 dana po slajdu, `polazak` (ako postoji) je prva kartica, s oznakom "Polazak"; kad je `dani` prazan, oznaka je "Program". Font je 13 pt i ne smanjuje se. Mjesto za fotku se smanjuje s 1,6 na 1,0 in kad tekstu treba prostora. Ako tekst ni tada ne stane u pola slajda (procjena po broju redaka, otprilike 650 znakova), taj dan je sam na slajdu, preko cijele širine.
 - Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke. Bez `cijena.iznos` prikazuje se `___,__ €`.
@@ -172,10 +173,10 @@ ponuda-prezentacija/
     schema/ponuda.ts     Zod
     cli/                 render.ts (npm run render), check.ts (npm run check), extract.ts (npm run extract)
   scripts/build-icons.ts react-icons → PNG u assets/icons/ (npm run icons)
-  config/agencija.json   kontakt, o agenciji, certifikati
+  config/agencija.json   kontakt, o agenciji
   config/extract.json    točan ID Claude modela za ekstrakciju
   config/lokacije.json   aliasi lokacija → mape fotki
-  assets/logo/ assets/cert/ assets/icons/ assets/foto/
+  assets/logo/ assets/icons/ assets/foto/
   public/index.html      UI
   examples/*.json        ručno napisane Ponuda JSON datoteke (ulaz za `npm run render`)
   examples/*.sha256      očekivani SHA-256 renderiranog .pptx (za `npm run check`)

@@ -23,8 +23,10 @@ export const Agencija = z.object({
     podnaslov: z.string(),
     prednosti: z
       .array(z.object({ ikona: z.enum(ICONS), naslov: z.string(), opis: z.string() }))
-      .length(4),
-    certifikati: z.array(z.object({ slika, w: z.number().positive(), h: z.number().positive() })),
+      .min(1)
+      .max(3), // stacked in the left half of the slide
+    foto: slika.optional(), // right half of the slide; placeholder when missing
+
   }),
   kontakt: z.object({
     ime: z.string(),
