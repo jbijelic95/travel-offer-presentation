@@ -14,7 +14,8 @@ const FULL_W = W - 2 * M;
 
 function kartice(p: Ponuda): Kartica[] {
   const out: Kartica[] = [];
-  if (p.polazak) out.push({ oznaka: "Polazak", tekst: p.polazak });
+  // No day headings (one-day trip): polazak holds the whole program (PLAN §3).
+  if (p.polazak) out.push({ oznaka: p.dani.length ? "Polazak" : "Program", tekst: p.polazak });
   for (const d of p.dani) out.push({ oznaka: d.oznaka, datum: d.datum, tekst: d.tekst });
   return out;
 }

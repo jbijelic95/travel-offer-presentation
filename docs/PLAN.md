@@ -95,6 +95,7 @@ Pravila za LLM (u system promptu):
 - **Svaka rečenica ponude ide u točno jedno polje**, prema tome gdje stoji u ponudi. Nema dupliciranja (npr. "dva gratis mjesta" u listi "Cijena uključuje" ide samo u `ukljucuje`).
 - `pogodnosti` samo iz izričite sekcije ("Agencija odobrava", "Pogodnosti"); ako je nema, `[]`.
 - `polazak` = samo tekst prije prvog zaglavlja dana. Tekst ispod "1. dan" ostaje u danu 1.
+- Jednodnevni izlet bez zaglavlja "1. dan": `dani` = `[]`, cijeli program ide u `polazak` (nema zaglavlja, pa je sve "prije prvog dana"). Oznaka "1. dan" se ne izmišlja.
 - Cijena u kunama ("545Kn"): `iznos` = `null`, `valuta` = "EUR", `tekst` kako piše, plus redak u `meta.upozorenjaEkstrakcije`. Nikad ne preračunava valute.
 - `meta.izvorniNazivDatoteke` i `meta.ekstrakcijaModel` popunjava kod, ne LLM. Kod postavlja i `brojDana` (= `dani.length`) i `valuta` ("EUR").
 - Shema koju LLM dobiva (`src/extract/index.ts`, `Ekstrakcija`) je ravna: sva polja obavezna, bez `null`. Prazno = `""` / `0` / `[]`, a kod to pretvara u polje koje nedostaje prije `Ponuda.parse`. Razlog: opcionalna polja i unije prerastu gramatiku structured outputa (API vraća 400 "Schema is too complex").
@@ -136,7 +137,7 @@ Prikaz: iznad gumba za download, žuta/crvena lista. Uz svaku poruku broj slajda
 - Jedan modul po tipu slajda: `naslovna`, `ukratko`, `oAgenciji`, `dani`, `cijena`, `placanje`, `napomene`, `hvala`.
 - Fiksni sadržaj agencije u `config/agencija.json`: kontakt, "o agenciji" i certifikati. Ništa više. Pogodnosti dolaze samo iz ponude.
 - Determinizam: datumi u `docProps/core.xml` i u zip zapisima su fiksni (`src/render/deterministic.ts`), pa isti JSON daje isti SHA-256.
-- Program po danima: 2 dana po slajdu, `polazak` (ako postoji) je prva kartica. Font je 13 pt i ne smanjuje se. Mjesto za fotku se smanjuje s 1,6 na 1,0 in kad tekstu treba prostora. Ako tekst ni tada ne stane u pola slajda (procjena po broju redaka, otprilike 650 znakova), taj dan je sam na slajdu, preko cijele širine.
+- Program po danima: 2 dana po slajdu, `polazak` (ako postoji) je prva kartica, s oznakom "Polazak"; kad je `dani` prazan, oznaka je "Program". Font je 13 pt i ne smanjuje se. Mjesto za fotku se smanjuje s 1,6 na 1,0 in kad tekstu treba prostora. Ako tekst ni tada ne stane u pola slajda (procjena po broju redaka, otprilike 650 znakova), taj dan je sam na slajdu, preko cijele širine.
 - Slajd "Cijena": ako `cijena.varijante` ima > 1, prikaz kao 2–3 kartice umjesto jedne brojke. Bez `cijena.iznos` prikazuje se `___,__ €`.
 - "Uključuje", "ne uključuje" i doplate teku u dva stupca. Što ne stane, ide na slajd "Cijena putovanja (nastavak)". Doplate su u tamnom okviru s cijenom; ako tamo ne stanu (npr. uz 3 varijante), idu na kraj desne liste.
 - "Napomene": što ne stane, ide na slajd "Napomene (nastavak)". Prazna sekcija ili slajd se izostavlja.
