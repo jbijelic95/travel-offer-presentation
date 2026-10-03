@@ -42,8 +42,8 @@ Načela:
 | Shema/validacija | Zod (shema se generira u JSON Schema za Claude i koristi za runtime validaciju) | jedan izvor istine |
 | Renderer | pptxgenjs (port postojećeg `build.js`) | već napravljen i testiran template |
 | Ikone | react-icons → SVG → PNG (sharp) u build-time, spremljene u `assets/icons/` | ne renderirati ikone na svaki request |
-| Deploy | Docker (samo node) na Hetzner CX22 / Fly.io / Railway | jedan proces, privremene datoteke na disku; bez LibreOffice-a |
-| Auth | jedan zajednički pristupni ključ (basic auth ili `?key=` u cookieju) | javni URL, jedan korisnik; dovoljno |
+| Deploy | Railway, Docker (`node:22-slim`), deploy na svaki push na `main`; upute u `docs/DEPLOY.md` | jedan proces, ništa na disku, HTTPS i poddomena od platforme; bez LibreOffice-a |
+| Zaštita | basic auth (lozinka iz `APP_PASSWORD`, min 16 znakova), rate limit 20 izrada/h po IP-u, poseban API ključ s mjesečnim limitom potrošnje | javni URL, jedan korisnik; dovoljno |
 | Testovi | nema unit testova; `npm run check` uspoređuje SHA-256 renderiranih primjera, ostalo je ručni pregled | odluka vlasnika projekta |
 
 ## 3. `Ponuda` JSON shema (ugovor)
@@ -152,13 +152,15 @@ Prikaz: iznad gumba za download, žuta/crvena lista. Uz svaku poruku broj slajda
 ## 6. API
 
 ```
-GET  /                    stranica
-POST /api/generate        multipart {file}  → 200 { id, upozorenja[] , download: "/api/download/:id" }
-GET  /api/download/:id    .pptx (ime: "<naslov> – <narucitelj>.pptx"), briše se nakon 1 h
-POST /api/extract         (debug) → Ponuda JSON, za razvoj i testove
+GET  /                    stranica (public/index.html)
+GET  /logo.png            logo agencije za stranicu
+POST /api/generate        multipart {file}  → 200 { upozorenja: string[], pptx: base64, imeDatoteke: "<naslov> – <narucitelj>.pptx" }
+                                            → 4xx/5xx { greska: "poruka na hrvatskom" }
 ```
 
-Ograničenja: max 20 MB upload, samo .odt/.docx/.pdf (.doc se odbija s porukom "Spremite ponudu kao .odt ili .docx"), timeout 120 s.
+Ništa se ne sprema na disk: .pptx ide u odgovoru, stranica ga skida iz Bloba. Zato nema `/api/download/:id` ni čišćenja.
+
+Sve rute traže lozinku (basic auth, korisničko ime je bilo koje). Ograničenja: max 20 MB upload, samo .odt/.docx/.pdf (.doc se odbija s porukom "Spremite ponudu kao .odt ili .docx"), 20 izrada na sat po IP-u, timeout ekstrakcije 120 s, jedan ponovni pokušaj kad API prekine vezu. Za ekstrakciju bez web-a postoji `npm run extract`.
 
 ## 7. Struktura repozitorija
 
@@ -205,19 +207,24 @@ ponuda-prezentacija/
 
 **M3 — Validacija**
 - Pravila iz §4.
+- Otvoreno: pravilo "`dani` prazan = greška" sukobljava se s odlukom da jednodnevni izlet i ponuda bez programa imaju `dani: []`. Prijedlog: upozorenje, ili greška samo kad nema ni `polazak`.
+- Upozorenja validacije dodati u `upozorenja` u odgovoru `POST /api/generate` (sada su tamo samo `meta.upozorenjaEkstrakcije`).
 
 **M4 — Web + API + deploy**
-- `index.html`: drag&drop, progress, lista upozorenja, gumb download.
-- Auth ključ, rate limit, čišćenje privremenih datoteka.
-- Docker build, deploy na VPS, HTTPS (Caddy).
+- `public/index.html`: drag&drop, progress, lista upozorenja, gumb download.
+- `src/server.ts` (`npm start`): lozinka, rate limit, limit veličine i tipa (§6).
+- Dockerfile, deploy na Railway (`docs/DEPLOY.md`).
 - ✅ Kad: mama sama od ponude do .pptx bez tebe.
 
 **M5 — Fotke i finese** (kad se skupe resursi)
 - `assets/foto/`, mapiranje lokacija, optimizacija.
+- Fotke za dane: plan je bio Wikipedia slike (s potpisom autora) ili Pexels, s cacheom u `assets/foto/`. Vlasnik prvo želi s mamom vidjeti koje fotke ona ima.
+- Smanjivanje fotki (sharp, 1600 px, JPEG q80) još nije napravljeno. Fotka agencije se sada ugrađuje u originalnoj veličini.
+- Nijedan podržani fixture nema 2 varijante cijene (jedini je .doc u `test/fixtures/unsupported/`). Kartice varijanti na slajdu "Cijena" još nisu provjerene na stvarnoj ponudi.
 - Novi logo / boje ako ih agencija promijeni — samo `config` + `assets`.
 
 ## 9. Otvorena pitanja (odgovoriti prije M2)
 1. ~~Formati~~ — odgovoreno: podržani su samo .odt, .docx i .pdf. .doc nije podržan; bez LibreOffice-a.
 2. ~~Cijena~~ — odgovoreno: uvijek EUR.
-3. Gdje hostati — imaš li već VPS?
+3. ~~Gdje hostati~~ — odgovoreno: Railway, poddomena `ponuda-prezentacija.up.railway.app`.
 4. Treba li i PDF export prezentacije uz .pptx? (Bez soffice-a u containeru to više nije besplatno.)

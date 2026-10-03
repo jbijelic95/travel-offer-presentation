@@ -86,7 +86,7 @@ function toPonuda(e: Ekstrakcija, meta: Ponuda["meta"]): Ponuda {
   });
 }
 
-export async function extract(doc: Converted, izvorniNazivDatoteke: string): Promise<Ponuda> {
+export async function extract(doc: Converted, izvorniNazivDatoteke: string, signal?: AbortSignal): Promise<Ponuda> {
   const { model } = ExtractConfig.parse(JSON.parse(readFileSync(CONFIG_FILE, "utf8")));
   const content: Anthropic.ContentBlockParam[] =
     doc.kind === "pdf"
@@ -103,7 +103,7 @@ export async function extract(doc: Converted, izvorniNazivDatoteke: string): Pro
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content }],
     output_config: { effort: "medium", format: zodOutputFormat(Ekstrakcija) },
-  });
+  }, { signal });
 
   if (res.stop_reason === "refusal") throw new Error(`Model je odbio obraditi ponudu (${res.stop_details?.category ?? "bez kategorije"}).`);
   if (res.stop_reason === "max_tokens") throw new Error("Odgovor modela je prekinut (max_tokens). Ponuda je preduga.");

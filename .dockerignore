@@ -1,0 +1,9 @@
+node_modules
+out
+tmp
+.env
+.git
+docs
+examples
+test
+*.log

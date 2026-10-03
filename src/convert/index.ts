@@ -10,18 +10,33 @@ export type Converted = { kind: "text"; text: string } | { kind: "pdf"; data: Bu
 
 export const PODRZANI_FORMATI = [".odt", ".docx", ".pdf"];
 
-export async function convert(file: string): Promise<Converted> {
-  const ext = extname(file).toLowerCase();
-  if (ext === ".doc") throw new Error(`${file}: .doc nije podržan. Spremite ponudu kao .odt ili .docx.`);
-  if (!PODRZANI_FORMATI.includes(ext))
-    throw new Error(`${file}: format "${ext}" nije podržan. Podržani su ${PODRZANI_FORMATI.join(", ")}.`);
+/** Thrown for files the tool cannot read: wrong format or a damaged document. */
+export class ConvertError extends Error {}
 
-  const buf = readFileSync(file);
+export async function convert(file: string): Promise<Converted> {
+  checkFormat(file);
+  return convertBuffer(readFileSync(file), file);
+}
+
+/** Throws ConvertError unless the file name has a supported extension. */
+export function checkFormat(file: string) {
+  const ext = extname(file).toLowerCase();
+  if (ext === ".doc") throw new ConvertError(`${file}: .doc nije podržan. Spremite ponudu kao .odt ili .docx.`);
+  if (!PODRZANI_FORMATI.includes(ext))
+    throw new ConvertError(`${file}: format "${ext}" nije podržan. Podržani su ${PODRZANI_FORMATI.join(", ")}.`);
+}
+
+/** Same as convert(), for a file already in memory. The extension of `file` decides the format. */
+export async function convertBuffer(buf: Buffer, file: string): Promise<Converted> {
+  checkFormat(file);
+  const ext = extname(file).toLowerCase();
   if (ext === ".pdf") return { kind: "pdf", data: buf };
-  const zip = await JSZip.loadAsync(buf);
+  const zip = await JSZip.loadAsync(buf).catch(() => {
+    throw new ConvertError(`${file}: datoteka je oštećena ili nije ${ext}.`);
+  });
   const entry = ext === ".odt" ? "content.xml" : "word/document.xml";
   const xml = await zip.file(entry)?.async("string");
-  if (xml === undefined) throw new Error(`${file}: nema ${entry}, datoteka je oštećena ili nije ${ext}.`);
+  if (xml === undefined) throw new ConvertError(`${file}: nema ${entry}, datoteka je oštećena ili nije ${ext}.`);
   return { kind: "text", text: ext === ".odt" ? odtText(xml) : docxText(xml) };
 }
 

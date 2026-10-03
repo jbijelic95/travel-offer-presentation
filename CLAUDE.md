@@ -6,6 +6,8 @@ Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.docx/.pdf; .do
 
 ## Što je u repou
 - `docs/PLAN.md` — plan implementacije
+- `docs/DEPLOY.md` — deploy na Railway, env varijable, upute za mamu
+- `src/server.ts` + `public/index.html` — web stranica i `POST /api/generate`
 - `src/schema/ponuda.ts` — Zod shema `Ponuda` (ugovor ekstrakcija ↔ renderer)
 - `src/render/` — renderer (pptxgenjs), jedan modul po slajdu u `slides/`
 - `config/agencija.json` — kontakt, "o agenciji"
@@ -29,3 +31,4 @@ Alat za PA Polet Vinkovci: iz ponude za školsko putovanje (.odt/.docx/.pdf; .do
 - `npm run check -- --update` — nakon namjerne promjene izgleda (prvo pregledaj `out/*.pptx`)
 - `npm run icons` — nakon dodavanja ikone u `src/render/icons.ts`
 - `npm run typecheck`
+- `npm start` — server na `http://localhost:3000`; treba `APP_PASSWORD` (min 16 znakova) i `ANTHROPIC_API_KEY` (env ili `.env`)

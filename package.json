@@ -11,12 +11,17 @@
     "icons": "tsx scripts/build-icons.ts",
     "render": "tsx src/cli/render.ts",
     "check": "tsx src/cli/check.ts",
-    "extract": "tsx src/cli/extract.ts"
+    "extract": "tsx src/cli/extract.ts",
+    "start": "tsx src/server.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.131.0",
+    "@fastify/multipart": "^10.1.2",
+    "@fastify/rate-limit": "^11.2.0",
+    "fastify": "^5.12.5",
     "jszip": "^3.10.2",
     "pptxgenjs": "^4.0.1",
+    "tsx": "^4.23.15",
     "zod": "^4.6.5"
   },
   "devDependencies": {
@@ -27,7 +32,6 @@
     "react-dom": "^19.3.0",
     "react-icons": "^5.7.0",
     "sharp": "^0.35.5",
-    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }

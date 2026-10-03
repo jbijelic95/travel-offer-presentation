@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ponuda → Prezentacija</title>
+<style>
+  :root {
+    --red: #c8102e; --red-soft: #fbe9ec; --ink: #2b2b2e; --mute: #6e6e73;
+    --light: #f4f4f6; --line: #e3e3e7; --warn: #8a5a00; --warn-bg: #fff6e0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; background: var(--light); color: var(--ink);
+    font: 16px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+    display: flex; align-items: flex-start; justify-content: center; padding: 48px 16px;
+  }
+  main { width: 100%; max-width: 560px; background: #fff; border-radius: 16px; padding: 32px; box-shadow: 0 4px 24px rgba(0,0,0,.06); }
+  header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+  header img { height: 48px; }
+  h1 { font-size: 22px; margin: 0; }
+  #drop {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+    border: 2px dashed var(--line); border-radius: 12px; padding: 40px 16px; text-align: center; cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  #drop:hover, #drop.over { border-color: var(--red); background: var(--red-soft); }
+  #drop strong { font-size: 17px; }
+  #drop span { color: var(--mute); font-size: 14px; }
+  #file { display: none; }
+  button {
+    width: 100%; margin-top: 20px; padding: 14px; border: 0; border-radius: 10px;
+    font: inherit; font-weight: 600; font-size: 17px; cursor: pointer; background: var(--red); color: #fff;
+  }
+  button:disabled { background: var(--line); color: var(--mute); cursor: default; }
+  button.secondary { background: #fff; color: var(--red); border: 2px solid var(--red); }
+  #status { margin-top: 20px; text-align: center; color: var(--mute); }
+  #status.error { color: var(--red); font-weight: 600; }
+  .spinner {
+    display: inline-block; width: 18px; height: 18px; vertical-align: -3px; margin-right: 8px;
+    border: 3px solid var(--line); border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #result { margin-top: 24px; }
+  #result h2 { font-size: 17px; margin: 0 0 8px; }
+  #warnings { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 12px 16px 12px 36px; margin: 0 0 4px; }
+  #done { color: #1d7a3a; font-weight: 600; text-align: center; margin: 0; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="/logo.png" alt="">
+    <h1>Ponuda → Prezentacija</h1>
+  </header>
+
+  <label id="drop" for="file">
+    <strong id="drop-title">Povucite ponudu ovdje</strong>
+    <span id="drop-hint">ili kliknite za odabir datoteke (.odt, .docx, .pdf)</span>
+  </label>
+  <input id="file" type="file" accept=".odt,.docx,.pdf">
+
+  <button id="go" disabled>Kreiraj prezentaciju</button>
+  <div id="status" role="status"></div>
+
+  <section id="result" hidden>
+    <div id="warnings-box" hidden>
+      <h2>Provjerite u prezentaciji:</h2>
+      <ul id="warnings"></ul>
+    </div>
+    <p id="done">Prezentacija je gotova.</p>
+    <button id="download">Preuzmi prezentaciju</button>
+    <button id="again" class="secondary">Nova ponuda</button>
+  </section>
+</main>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  const MAX_MB = 20;
+  const FORMATI = [".odt", ".docx", ".pdf"];
+  let file = null;
+  let download = null; // { url, ime }
+
+  function setStatus(html, error = false) {
+    $("status").innerHTML = html;
+    $("status").className = error ? "error" : "";
+  }
+
+  function pick(f) {
+    if (!f) return;
+    const ext = f.name.slice(f.name.lastIndexOf(".")).toLowerCase();
+    reset();
+    if (ext === ".doc") return setStatus("Format .doc nije podržan. Spremite ponudu kao .odt ili .docx.", true);
+    if (!FORMATI.includes(ext)) return setStatus("Podržane su samo datoteke .odt, .docx i .pdf.", true);
+    if (f.size > MAX_MB * 1024 * 1024) return setStatus(`Datoteka je veća od ${MAX_MB} MB.`, true);
+    file = f;
+    $("drop-title").textContent = f.name;
+    $("drop-hint").textContent = "Kliknite za drugu datoteku";
+    $("go").disabled = false;
+  }
+
+  function reset() {
+    file = null;
+    if (download) URL.revokeObjectURL(download.url);
+    download = null;
+    $("file").value = "";
+    $("drop-title").textContent = "Povucite ponudu ovdje";
+    $("drop-hint").textContent = "ili kliknite za odabir datoteke (.odt, .docx, .pdf)";
+    $("go").disabled = true;
+    $("go").hidden = false;
+    $("result").hidden = true;
+    setStatus("");
+  }
+
+  $("file").addEventListener("change", (e) => pick(e.target.files[0]));
+  for (const ev of ["dragenter", "dragover"]) $("drop").addEventListener(ev, (e) => { e.preventDefault(); $("drop").classList.add("over"); });
+  for (const ev of ["dragleave", "drop"]) $("drop").addEventListener(ev, (e) => { e.preventDefault(); $("drop").classList.remove("over"); });
+  $("drop").addEventListener("drop", (e) => pick(e.dataTransfer.files[0]));
+  // A file dropped next to the box would otherwise open in the browser.
+  window.addEventListener("dragover", (e) => e.preventDefault());
+  window.addEventListener("drop", (e) => e.preventDefault());
+
+  $("go").addEventListener("click", async () => {
+    if (!file) return;
+    $("go").disabled = true;
+    $("drop").style.pointerEvents = "none";
+    const start = Date.now();
+    const tick = () => setStatus(`<span class="spinner"></span>Obrađujem ponudu… ${Math.round((Date.now() - start) / 1000)} s (obično 30–60 s)`);
+    tick();
+    const timer = setInterval(tick, 1000);
+
+    try {
+      const body = new FormData();
+      body.append("file", file);
+      const res = await fetch("/api/generate", { method: "POST", body });
+      const data = await res.json().catch(() => ({ greska: `Greška na serveru (${res.status}). Pokušajte ponovno.` }));
+      if (!res.ok) throw new Error(data.greska);
+
+      const bytes = Uint8Array.from(atob(data.pptx), (c) => c.charCodeAt(0));
+      const blob = new Blob([bytes], { type: "application/vnd.openxmlformats-officedocument.presentationml.presentation" });
+      download = { url: URL.createObjectURL(blob), ime: data.imeDatoteke };
+
+      $("warnings").replaceChildren(...data.upozorenja.map((w) => Object.assign(document.createElement("li"), { textContent: w })));
+      $("warnings-box").hidden = data.upozorenja.length === 0;
+      $("go").hidden = true;
+      $("result").hidden = false;
+      setStatus("");
+    } catch (e) {
+      const poruka = e instanceof TypeError ? "Nema veze sa serverom. Provjerite internet i pokušajte ponovno." : e.message;
+      setStatus(poruka, true);
+      $("go").disabled = false;
+    } finally {
+      clearInterval(timer);
+      $("drop").style.pointerEvents = "";
+    }
+  });
+
+  $("download").addEventListener("click", () => {
+    if (!download) return;
+    const a = Object.assign(document.createElement("a"), { href: download.url, download: download.ime });
+    a.click();
+  });
+  $("again").addEventListener("click", reset);
+</script>
+</body>
+</html>
